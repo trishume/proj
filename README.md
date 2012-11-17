@@ -1,5 +1,5 @@
 # Proj
-## Note: Proj is a work in progress, it doesn't work yet.
+#### Note: Proj is a work in progress, it doesn't work yet.
 
 `proj` is a command line tool for managing projects. 
 It integrates with Git and Github to allow you to easily 
@@ -53,7 +53,7 @@ attribute in `~/.projrc.yml`.
 
 Example:
 
-   projects\_file: ~/Dropbox/coding/projects.yml
+   projects_file: ~/Dropbox/coding/projects.yml
 
 ### Creating a New Project 
 
@@ -80,7 +80,7 @@ projects.yml file. The keys that can be used under a property in `new_projects` 
 
 Example:
 
-    new\_projects:
+    new_projects:
       folder:
         default: ~/Development
         aliases:
@@ -90,6 +90,7 @@ Example:
         ask: false
       github:
         default: true
+        username: trishume
         aliases:
           Y: true
           N: false
