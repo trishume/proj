@@ -46,6 +46,11 @@ class ProjCommand
     val
   end
 
+  def asker
+    @asker ||= lambda {|quest,secret| ask("#{quest}: ") { |q| q.echo = !secret }}
+    @asker
+  end
+
   def create_project(name,defaults = false)
     configurator = Proj::Configurator.new(get_config('new_projects'))
     answers = {}
@@ -58,13 +63,29 @@ class ProjCommand
       ans = ask("#{question}: ")
       answers[attr] = ans.empty? ? nil : ans.strip
     end
-    asker = lambda {|quest,secret| ask("#{quest}: ") { |q| q.echo = !secret }}
     attributes = configurator.create(answers,asker)
-    # Add the new project to the library
     project = Proj::Project.new(name,attributes)
+    # Run the actual side effecting operations like
+    # creating folders and repositories.
+    creator = Proj::Creator.new(@config)
+    creator.create(project,asker)
+    # Add the new project to the library
     @library.add_project(project)
     # Write out the updated project filetype
     save_projects!
+  end
+
+  def remove_project(name)
+    raise "Project #{name} is not managed by proj" unless @library.get(name)
+    puts <<-NOTICE
+Note: this does not delete the project or its repositories, it simply stops proj from managing it.
+    NOTICE
+    confirm = ask("Are you sure you wan't to stop proj managing project #{name} [Y/n]? ")
+    if confirm == "Y"
+      puts "Removing #{name} from projects.yml"
+      @library.remove_project(name)
+      save_projects!
+    end
   end
 end
 
@@ -75,5 +96,14 @@ command :new do |c|
   c.action do |args,options|
     comm = ProjCommand.new
     comm.create_project(args.first,options.defaults)
+  end
+end
+
+command :rm do |c|
+  c.syntax = 'proj rm <name>'
+  c.description = 'Stop proj managing a project.'
+  c.action do |args,options|
+    comm = ProjCommand.new
+    comm.remove_project(args.first)
   end
 end

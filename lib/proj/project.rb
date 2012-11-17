@@ -6,5 +6,8 @@ module Proj
       @name = name
       @attributes = attrs
     end
+    def [](attr)
+      @attributes[attr]
+    end
   end
 end

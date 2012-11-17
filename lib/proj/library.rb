@@ -10,6 +10,12 @@ module Proj
     def add_project(proj)
       @projects << proj
     end
+    def remove_project(name)
+      @projects.delete_if {|p| p.name == name}
+    end
+    def get(name)
+      @projects.find {|p| p.name == name}
+    end
     def load(projects_file)
       projects_file['projects'].each do |name,attrs|
         @projects << Project.new(name,attrs)

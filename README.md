@@ -53,7 +53,7 @@ attribute in `~/.projrc.yml`.
 
 Example:
 
-   projects_file: ~/Dropbox/coding/projects.yml
+    projects_file: ~/Dropbox/coding/projects.yml
 
 ### Creating a New Project 
 

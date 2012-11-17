@@ -55,7 +55,7 @@ module Proj
     def parse_answer(answer,type)
       case type
       when :bool
-        answer == "N" ? false : true
+        answer == "n" ? false : true
       when :string
         answer
       when :array
@@ -67,7 +67,7 @@ module Proj
       end
     end
     def question_options(type,default)
-      opts = type == :bool ? "Y/N " : ''
+      opts = type == :bool ? "y/n " : ''
       defs = default.to_s.length < 30 ? default.to_s : "default"
       "[#{opts}blank for #{defs}]"
     end
