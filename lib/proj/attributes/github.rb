@@ -16,6 +16,12 @@ module Proj
       def self.type
         :bool
       end
+      def self.transform_val(value,config,asker)
+        return false unless value
+        {
+          'username' => config['username']
+        }
+      end
     end
   end
 end

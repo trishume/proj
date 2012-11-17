@@ -29,12 +29,12 @@ module Proj
     # creates a new project given the answers
     # to the questions. The answers are a hash of
     # attribute to an answer string or nil for default.
-    def create(answers)
+    def create(answers, asker)
       project = {}
       answers.each do |attr,answer|
         handler = Proj::Attributes::attribute_handler(attr)
         val = answer_value(answer,handler)
-        project[attr] = val
+        project[attr] = handler.transform_val(val,@config[attr],asker)
       end
       project
     end

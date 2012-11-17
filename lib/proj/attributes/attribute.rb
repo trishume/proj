@@ -14,6 +14,17 @@ module Proj
       def self.type
         :string
       end
+
+      # Transforms the entered value to its
+      # final form. May ask additional questions
+      # via the asker lambda with parameters
+      # |question,passwordMode|
+      #
+      # config is the value for the plugin in The
+      # projrc new_projects key.
+      def self.transform_val(value,config,asker)
+        value
+      end
     end
   end
 end

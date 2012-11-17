@@ -10,12 +10,17 @@ module Proj
     def add_project(proj)
       @projects << proj
     end
+    def load(projects_file)
+      projects_file['projects'].each do |name,attrs|
+        @projects << Project.new(name,attrs)
+      end
+    end
     def to_h()
       hash = {}
       @projects.each do |p|
         hash[p.name] = p.attributes
       end
-      hash
+      {'projects' => hash}
     end
   end
 end
