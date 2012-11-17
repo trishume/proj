@@ -10,7 +10,7 @@ module Proj
         "Value for #{yaml_name}" 
       end
       # The type of the attribute.
-      # :string, :bool, :hash or :array
+      # :string, :bool, :hash, :array or :integer
       def self.type
         :string
       end

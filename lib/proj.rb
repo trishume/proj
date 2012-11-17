@@ -1,6 +1,6 @@
 require "proj/version"
 require "proj/library"
-require "proj/creator"
+require "proj/configurator"
 
 module Proj
 

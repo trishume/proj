@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+# vi: set filetype=ruby fileencoding=UTF-8 shiftwidth=2 tabstop=2 expandtab
+
+require "commander/import"
+require "proj"
+require "yaml"
+
+program :name, 'proj'
+program :version, Proj::VERSION
+program :description, "Command line tool for managing projects"
+
+
+class ProjCommand
+  def initialize()
+    @config = load_projrc
+  end
+
+  def load_projrc()
+    YAML.load_file(ENV['HOME'] + "/.projrc.yml")
+  end
+
+  def get_config(key)
+    val = @config[key]
+    raise "Config key #{key} must be set in the .projrc.yml file" unless val
+    val
+  end
+
+  def create_project(name,defaults = false)
+    configurator = Proj::Configurator.new(get_config('new_projects'))
+    answers = {}
+    configurator.questions.each do |attr,question|
+      # If defaults flag is set skip questions
+      if defaults
+        answers[attr] = nil
+        next
+      end
+      ans = ask("#{question}: ")
+      answers[attr] = ans.empty? ? nil : ans.strip
+    end
+    project = configurator.create(answers)
+    p project
+  end
+end
+
+command :new do |c|
+  c.syntax = 'proj new <name> [options]'
+  c.description = 'Create a new project'
+  c.option '-d','--defaults','Use defaults instead of prompts'
+  c.action do |args,options|
+    comm = ProjCommand.new
+    comm.create_project(args.first,options.defaults)
+  end
+end
