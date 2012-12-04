@@ -1,0 +1,6 @@
+require "proj/commands/command"
+require "proj/commands/create"
+require "proj/commands/import"
+require "proj/commands/remove"
+require "proj/commands/dir"
+require "proj/commands/commit"

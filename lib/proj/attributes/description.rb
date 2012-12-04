@@ -2,25 +2,19 @@ require "proj/attributes/attribute"
 
 module Proj
   module Attributes
-    class Github < Attribute
+    class Description < Attribute
       # The key to use in the YAML files
       def self.name
-        "github"
+        'description'
       end
       # The question to ask when set interactively
       def self.question(import)
-        import ? "Has Github Repo?" : "Create a Github repo"
+        "Project Description" 
       end
       # The type of the attribute.
       # :string, :bool, :hash or :array
       def self.type
-        :bool
-      end
-      def self.transform_val(value,config,asker)
-        return false unless value
-        {
-          'username' => config['username']
-        }
+        :string
       end
     end
   end

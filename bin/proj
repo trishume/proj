@@ -4,98 +4,32 @@
 require "commander/import"
 require "proj"
 require "yaml"
+require "pathname"
 
 program :name, 'proj'
 program :version, Proj::VERSION
 program :description, "Command line tool for managing projects"
 
+asker = lambda {|quest,secret| ask("#{quest}: ") { |q| q.echo = !secret }}
 
-class ProjCommand
-  def initialize()
-    @config = load_projrc
-    @library = Proj::Library.new(@config)
-    @library.load(load_projects())
-  end
-
-  def load_projrc()
-    YAML.load_file(ENV['HOME'] + "/.projrc.yml")
-  end
-
-  def projects_file
-    File.expand_path(@config['projects_file'])
-  end
-
-  def load_projects()
-    file = projects_file
-    if File.exists?(file)
-      YAML.load_file(file)
-    else
-      {'projects'=>{}}
-    end
-  end
-
-  def save_projects!
-    File.open(projects_file,'w') do |f|
-      f.puts @library.to_h.to_yaml
-    end
-  end
-
-  def get_config(key)
-    val = @config[key]
-    raise "Config key #{key} must be set in the .projrc.yml file" unless val
-    val
-  end
-
-  def asker
-    @asker ||= lambda {|quest,secret| ask("#{quest}: ") { |q| q.echo = !secret }}
-    @asker
-  end
-
-  def create_project(name,defaults = false)
-    configurator = Proj::Configurator.new(get_config('new_projects'))
-    answers = {}
-    configurator.questions.each do |attr,question|
-      # If defaults flag is set skip questions
-      if defaults
-        answers[attr] = nil
-        next
-      end
-      ans = ask("#{question}: ")
-      answers[attr] = ans.empty? ? nil : ans.strip
-    end
-    attributes = configurator.create(answers,asker)
-    project = Proj::Project.new(name,attributes)
-    # Run the actual side effecting operations like
-    # creating folders and repositories.
-    creator = Proj::Creator.new(@config)
-    creator.create(project,asker)
-    # Add the new project to the library
-    @library.add_project(project)
-    # Write out the updated project filetype
-    save_projects!
-  end
-
-  def remove_project(name)
-    raise "Project #{name} is not managed by proj" unless @library.get(name)
-    puts <<-NOTICE
-Note: this does not delete the project or its repositories, it simply stops proj from managing it.
-    NOTICE
-    confirm = ask("Are you sure you wan't to stop proj managing project #{name} [Y/n]? ")
-    if confirm == "Y"
-      puts "Removing #{name} from projects.yml"
-      @library.remove_project(name)
-      save_projects!
-    end
-  end
-end
 
 command :new do |c|
   c.syntax = 'proj new <name> [options]'
   c.description = 'Create a new project'
   c.option '-d','--defaults','Use defaults instead of prompts'
   c.action do |args,options|
-    comm = ProjCommand.new
-    comm.create_project(args.first,options.defaults)
+    comm = Proj::Commands::Create.new(asker)
+    comm.run(args.first,options.defaults)
+  end
+end
+
+command :import do |c|
+  c.syntax = 'proj import <path> [options]'
+  c.description = 'Import an existing project.'
+  c.option '-d','--defaults','Use defaults instead of prompts'
+  c.action do |args,options|
+    comm = Proj::Commands::Import.new(asker)
+    comm.run(args.first || ".",options.defaults)
   end
 end
 
@@ -103,7 +37,25 @@ command :rm do |c|
   c.syntax = 'proj rm <name>'
   c.description = 'Stop proj managing a project.'
   c.action do |args,options|
-    comm = ProjCommand.new
-    comm.remove_project(args.first)
+    comm = Proj::Commands::Remove.new(asker)
+    comm.run(args.first)
+  end
+end
+
+command :dir do |c|
+  c.syntax = 'proj dir <name>'
+  c.description = 'Fuzzy search for a project, outputs the project folder.'
+  c.action do |args,options|
+    comm = Proj::Commands::Dir.new(asker)
+    comm.run(args.first)
+  end
+end
+
+command :commit do |c|
+  c.syntax = 'proj commit <name>'
+  c.description = 'Add all, commit (asks for a message) and push to origin.'
+  c.action do |args,options|
+    comm = Proj::Commands::Commit.new(asker)
+    comm.run(args.first)
   end
 end

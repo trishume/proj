@@ -13,7 +13,10 @@ module Proj
     def initialize(config)
       @config = config
     end
-    def questions
+    # If the import parameter is true then the questions
+    # should be phrased for an import. As in don't use the
+    # word "Create".
+    def questions(import=false)
       questions = {}
       @config.each do |attr,conf|
         next if conf["ask"] == false
@@ -21,7 +24,7 @@ module Proj
         next if handler.nil?
         opts = question_options(handler.type,
                                 conf['default'])
-        questions[attr] = "#{handler.question} #{opts}"
+        questions[attr] = "#{handler.question(import)} #{opts}"
       end
       questions
     end
@@ -31,10 +34,11 @@ module Proj
     # attribute to an answer string or nil for default.
     def create(answers, asker)
       project = {}
-      answers.each do |attr,answer|
+      @config.each do |attr,conf|
+        answer = answers[attr]
         handler = Proj::Attributes::attribute_handler(attr)
         val = answer_value(answer,handler)
-        project[attr] = handler.transform_val(val,@config[attr],asker)
+        project[attr] = handler.transform_val(val,conf,asker)
       end
       project
     end
@@ -68,7 +72,7 @@ module Proj
     end
     def question_options(type,default)
       opts = type == :bool ? "y/n " : ''
-      defs = default.to_s.length < 30 ? default.to_s : "default"
+      defs = default.to_s.length < 30 ? default.inspect : "default"
       "[#{opts}blank for #{defs}]"
     end
   end

@@ -6,7 +6,9 @@ module Proj
         raise "Name not set"
       end
       # The question to ask when set interactively
-      def self.question
+      # import is true if the project is being imported
+      # rather than created.
+      def self.question(import)
         "Value for #{yaml_name}" 
       end
       # The type of the attribute.

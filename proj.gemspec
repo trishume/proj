@@ -20,6 +20,7 @@ SUMMARY
   gem.add_runtime_dependency 'commander','~> 4.1.2'
   gem.add_runtime_dependency 'grit', '~> 2.5.0'
   gem.add_runtime_dependency 'github_api'
+  gem.add_runtime_dependency 'fuzzy_match'
 
   gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }

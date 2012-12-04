@@ -8,7 +8,7 @@ module Proj
         'folder'
       end
       # The question to ask when set interactively
-      def self.question
+      def self.question(import)
         "Project folder path" 
       end
       # The type of the attribute.

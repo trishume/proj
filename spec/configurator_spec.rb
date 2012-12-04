@@ -12,6 +12,9 @@ YAML_CONF = <<CONF
     ask: true
   github:
     default: true
+    username: trishume
+  description:
+    default: 
 CONF
 
 GITHUB_Q = "Create a Github repo [y/n blank for true]"
@@ -25,7 +28,7 @@ describe Proj::Configurator do
   end
   it 'should ask questions in the right format' do
     qs = @creator.questions
-    qs.size.should == 2
+    qs.size.should == Proj::Attributes::registered.size
     qs['github'].should == GITHUB_Q
     qs['folder'].should == FOLDER_Q
   end
@@ -54,10 +57,10 @@ describe Proj::Configurator do
   end
   it 'should handle nil for default' do
     answers = {
-      'github' => nil,
       'folder' => nil
     }
     proj = @creator.create(answers,@asker)
     proj['folder'].should == '/tmp'
+    proj['github'].should_not == false
   end
 end

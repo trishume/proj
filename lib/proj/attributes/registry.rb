@@ -1,10 +1,12 @@
 require 'proj/attributes/folder'
 require 'proj/attributes/github'
+require 'proj/attributes/description'
 
 module Proj
   module Attributes
     @@attributes = {
       "folder" => Folder,
+      "description" => Description,
       "github" => Github
     }
     def self.register_attribute(klass)

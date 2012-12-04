@@ -1,4 +1,5 @@
 require "proj/project"
+require "fuzzy_match"
 
 module Proj
   class Library
@@ -27,6 +28,10 @@ module Proj
         hash[p.name] = p.attributes
       end
       {'projects' => hash}
+    end
+    def fuzzy_search(query)
+      matcher = FuzzyMatch.new(@projects, :read => :name)
+      matcher.find(query)
     end
   end
 end

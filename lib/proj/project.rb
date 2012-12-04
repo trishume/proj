@@ -9,5 +9,8 @@ module Proj
     def [](attr)
       @attributes[attr]
     end
+    def folder
+      File.expand_path(@attributes['folder'] + '/' + @name)      
+    end
   end
 end
