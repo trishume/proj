@@ -12,7 +12,7 @@ module Proj
         repo.commit_index(asker.call("Commit message",false))
 
         # push to origin
-        repo.git.push("origin","master")
+        repo.git.push({},"origin","master")
       end
     end
   end
