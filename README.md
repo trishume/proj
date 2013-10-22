@@ -1,5 +1,5 @@
 # Proj
-#### Note: Proj is a work in progress, it doesn't work yet.
+#### Note: Proj is unfinished and has been replaced by [Pro](//github.com/trishume/pro)
 
 `proj` is a command line tool for managing projects. 
 It integrates with Git and Github to allow you to easily 
